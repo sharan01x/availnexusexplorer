@@ -1,0 +1,795 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Explorer — Powered by Avail</title>
+  <meta name="description"
+    content="Explore the Avail Nexus network — view latest blocks, transactions, and network statistics.">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+
+  <!-- Preconnect for fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Prevent flash of unstyled content on dark mode -->
+  <script>
+    (function () {
+      var stored = localStorage.getItem('avail-theme');
+      var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (stored === 'dark' || (!stored && prefersDark)) {
+        document.documentElement.classList.add('dark');
+      }
+      // Disable transitions during theme load
+      document.documentElement.style.setProperty('--transition-duration', '0s');
+      document.addEventListener('DOMContentLoaded', function () {
+        requestAnimationFrame(function () {
+          document.documentElement.style.removeProperty('--transition-duration');
+        });
+      });
+    })();
+  </script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <!-- Skip to content (accessibility) -->
+  <a href="#main-content" class="skip-to-content">Skip to content</a>
+
+  <!-- ============================================================
+       Header
+       ============================================================ -->
+  <header class="site-header">
+    <div class="site-header__inner">
+
+      <!-- Brand -->
+      <a href="/" class="site-header__brand" aria-label="Nexus Explorer home">
+        <svg class="brand-logo" viewBox="0 0 72 72" width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#clip0_2674_453)">
+            <path d="M56.1227 60.2147L63.14 63.6439C64.8833 64.4957 66.9926 63.7382 67.68 61.9237C69.6891 56.6201 71.2689 50.2837 71.8041 43.7601C72.4151 36.314 71.6599 28.7006 68.7035 22.1125L68.6994 22.1143C68.5679 21.8305 68.4344 21.5474 68.2987 21.2652C67.2815 19.3139 65.3761 16.9205 62.5702 15.3369C59.4075 13.552 55.0139 12.7442 49.2484 14.9038C48.0252 15.362 46.78 15.954 45.5312 16.6603C47.0997 19.3288 48.2234 22.9278 48.3126 27.6733C48.3933 31.9623 47.6975 36.024 46.6315 39.6426L57.1558 43.5501C59.2936 44.3439 60.6933 46.4571 60.2941 48.7023C59.7324 51.8611 58.7428 54.9355 57.3594 57.8501C56.9853 58.6381 56.574 59.4293 56.1227 60.2147Z" class="logo-blue"/>
+            <path d="M21.8652 57.3686C22.7281 57.1088 23.6393 56.7331 24.5957 56.2106C28.6457 53.9979 31.7087 50.3846 33.8862 46.8399C35.3391 44.4748 36.4214 42.1019 37.1526 40.1195C37.443 39.3323 38.3118 38.9052 39.0985 39.1973L55.9179 45.442C57.392 45.9893 58.3207 47.4714 58.0029 49.0114C57.5233 51.335 56.6845 54.1116 55.3586 56.9051C53.2786 61.287 50.0374 65.6341 45.1875 68.3819C41.1801 70.6523 37.0816 71.8235 33.2503 71.9995C29.0759 71.2932 26.3373 69.4813 24.5926 67.0616C22.7454 64.4997 21.9241 61.1329 21.8652 57.3686Z" class="logo-blue"/>
+            <path d="M32.0031 0.322354C42.3172 -0.88462 49.9809 1.39728 55.798 5.50473C58.8889 7.68718 61.4846 10.4037 63.686 13.4328L63.6624 13.4194C59.9076 11.3004 54.828 10.4605 48.4728 12.841C39.9413 16.0368 30.744 25.0421 25.8474 34.2257C22.6714 40.1824 19.5394 49.3163 19.6578 57.3778C19.7171 61.4186 20.595 65.2918 22.8011 68.3514C23.5691 69.4166 24.4875 70.3684 25.5672 71.1872C17.7107 69.2328 7.82516 63.791 2.49764 51.2475C-2.15156 40.3011 0.0590149 28.184 6.08264 18.4449C12.1155 8.69106 21.8578 1.50958 32.0031 0.322354Z" class="logo-blue"/>
+          </g>
+          <defs>
+            <clipPath id="clip0_2674_453">
+              <rect width="72.0006" height="71.9995" fill="white"/>
+            </clipPath>
+          </defs>
+        </svg>
+        <div class="site-header__brand-text">
+          <span class="site-header__brand-name">Nexus Explorer</span>
+          <span class="site-header__brand-sub">powered by Avail</span>
+        </div>
+      </a>
+
+      <!-- Nav -->
+      <nav class="site-header__nav" aria-label="Main navigation">
+        <a href="#" class="is-active">Home</a>
+        <a href="#">Blocks</a>
+        <a href="#">RFFs</a>
+        <a href="#">Stats</a>
+      </nav>
+
+      <!-- Actions -->
+      <div class="site-header__actions">
+        <!-- Search -->
+        <div class="search-bar" role="search" tabindex="0" aria-label="Search blocks and transactions">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+            <path
+              d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z">
+            </path>
+          </svg>
+          <span style="flex:1">Search...</span>
+          <kbd class="search-kbd">S</kbd>
+        </div>
+
+        <!-- Mobile menu toggle -->
+        <button class="icon-btn mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle navigation menu"
+          aria-expanded="false">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- Dark mode toggle -->
+        <button class="icon-btn" id="theme-toggle" aria-label="Toggle dark mode">
+          <!-- Sun icon (shown in dark mode) -->
+          <svg id="icon-sun" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" style="display:none">
+            <path d="M120,40V16a8,8,0,0,1,16,0V40a8,8,0,0,1-16,0Zm72,88a64,64,0,1,1-64-64A64.07,64.07,0,0,1,192,128Zm-16,0a48,48,0,1,0-48,48A48.05,48.05,0,0,0,176,128ZM58.34,69.66A8,8,0,0,0,69.66,58.34l-16-16A8,8,0,0,0,42.34,53.66Zm0,116.68-16,16a8,8,0,0,0,11.32,11.32l16-16a8,8,0,0,0-11.32-11.32ZM192,72a8,8,0,0,0,5.66-2.34l16-16a8,8,0,0,0-11.32-11.32l-16,16A8,8,0,0,0,192,72Zm5.66,114.34a8,8,0,0,0-11.32,11.32l16,16a8,8,0,0,0,11.32-11.32ZM48,128a8,8,0,0,0-8-8H16a8,8,0,0,0,0,16H40A8,8,0,0,0,48,128Zm80,80a8,8,0,0,0-8,8v24a8,8,0,0,0,16,0V216A8,8,0,0,0,128,208Zm112-88H216a8,8,0,0,0,0,16h24a8,8,0,0,0,0-16Z"/>
+          </svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg id="icon-moon" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
+            <path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Mobile navigation -->
+    <div class="mobile-nav" id="mobile-nav" aria-hidden="true">
+      <nav class="mobile-nav__inner" aria-label="Mobile navigation">
+        <a href="#" class="mobile-nav__link is-active">Home</a>
+        <a href="#" class="mobile-nav__link">Blocks</a>
+        <a href="#" class="mobile-nav__link">RFFs</a>
+        <a href="#" class="mobile-nav__link">Stats</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       Main
+       ============================================================ -->
+  <main class="site-main" id="main-content">
+
+    <!-- Outer container — surface background -->
+    <div class="outer-container">
+
+      <!-- Inner container — white/dark panel with animated grid background -->
+      <div class="inner-container">
+        <!-- Animated grid canvas behind the content -->
+        <canvas class="inner-grid-canvas"></canvas>
+
+        <div class="inner-content">
+          <!-- Stats -->
+          <div class="stats-grid" role="region" aria-label="Network statistics">
+            <div class="stat-card">
+              <div class="stat-card__inner">
+                <div class="stat-card__icon">
+                  <svg class="stat-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="458.52" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="60.30" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="117.19" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="174.08" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="230.97" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="287.86" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="344.75" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="401.64" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="458.52" y="458.52" width="50.06" height="50.06" rx="10.01" class="icon-shadow"/>
+                    <rect x="3.41" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="3.41" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="60.30" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="117.19" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="174.08" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="230.97" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="287.86" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="344.75" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="3.41" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="60.30" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="117.19" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="174.08" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="230.97" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="287.86" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="344.75" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                    <rect x="401.64" y="401.64" width="50.06" height="50.06" rx="10.01" class="icon-blue"/>
+                  </svg>
+                </div>
+                <div class="stat-card__content">
+                  <p class="stat-card__label">Latest Block</p>
+                  <p class="stat-card__value" id="stat-latest-block">31,009</p>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__inner">
+                <div class="stat-card__icon">
+                  <svg class="stat-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="92.16" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="122.28" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="152.40" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="182.51" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="212.63" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="242.75" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="272.87" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="302.98" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="333.10" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="363.22" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="62.04" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="62.04" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="152.40" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="212.63" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="242.75" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="272.87" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="302.98" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="333.10" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="363.22" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="152.40" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="152.40" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="152.40" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="212.63" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="242.75" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="272.87" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="302.98" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="333.10" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="363.22" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="242.75" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="242.75" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="152.40" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="212.63" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="242.75" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="272.87" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="302.98" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="333.10" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="363.22" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="333.10" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="333.10" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="152.40" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="212.63" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="242.75" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="272.87" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="302.98" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="333.10" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="363.22" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="423.45" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="423.45" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="92.16" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="122.28" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="152.40" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="182.51" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="212.63" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="242.75" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="272.87" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="302.98" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="333.10" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="363.22" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="393.34" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="423.45" y="483.69" width="26.50" height="26.50" rx="5.30" class="icon-shadow"/>
+                    <rect x="62.04" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="92.16" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="122.28" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="152.40" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="182.51" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="212.63" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="242.75" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="272.87" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="302.98" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="333.10" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="363.22" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="1.81" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="31.92" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="62.04" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="62.04" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="122.28" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="182.51" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="212.63" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="242.75" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="272.87" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="302.98" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="333.10" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="92.16" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="122.28" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="152.40" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="152.40" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="122.28" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="182.51" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="212.63" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="242.75" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="272.87" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="302.98" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="333.10" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="182.51" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="212.63" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="242.75" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="242.75" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="122.28" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="182.51" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="212.63" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="242.75" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="272.87" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="302.98" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="333.10" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="272.87" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="302.98" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="333.10" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="333.10" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="122.28" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="182.51" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="212.63" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="242.75" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="272.87" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="302.98" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="333.10" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="363.22" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="393.34" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="423.45" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="423.45" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="62.04" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="92.16" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="122.28" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="152.40" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="182.51" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="212.63" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="242.75" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="272.87" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="302.98" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="333.10" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="363.22" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                    <rect x="393.34" y="453.57" width="26.50" height="26.50" rx="5.30" class="icon-blue"/>
+                  </svg>
+                </div>
+                <div class="stat-card__content">
+                  <p class="stat-card__label">Total RFFs</p>
+                  <p class="stat-card__value" id="stat-total-rffs">0</p>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__inner">
+                <div class="stat-card__icon stat-card__icon--green">
+                  <svg class="stat-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="463.87" y="54.27" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="412.67" y="105.47" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="463.87" y="105.47" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="361.47" y="156.67" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="412.67" y="156.67" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="310.27" y="207.87" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="361.47" y="207.87" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="259.07" y="259.07" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="310.27" y="259.07" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="207.87" y="310.27" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="259.07" y="310.27" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="156.67" y="361.47" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="207.87" y="361.47" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="156.67" y="412.67" width="45.06" height="45.06" rx="9.01" class="icon-shadow"/>
+                    <rect x="412.67" y="3.07" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="361.47" y="54.27" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="412.67" y="54.27" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="310.27" y="105.47" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="361.47" y="105.47" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="259.07" y="156.67" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="310.27" y="156.67" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="3.07" y="207.87" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="207.87" y="207.87" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="259.07" y="207.87" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="3.07" y="259.07" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="54.27" y="259.07" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="156.67" y="259.07" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="207.87" y="259.07" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="54.27" y="310.27" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="105.47" y="310.27" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="156.67" y="310.27" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                    <rect x="105.47" y="361.47" width="45.06" height="45.06" rx="9.01" class="icon-blue"/>
+                  </svg>
+                </div>
+                <div class="stat-card__content">
+                  <p class="stat-card__label">Fulfilled</p>
+                  <p class="stat-card__value" id="stat-fulfilled">0</p>
+                  <p class="stat-card__trend">0% success rate</p>
+                </div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card__inner">
+                <div class="stat-card__icon">
+                  <svg class="stat-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="104.45" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="138.58" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="172.71" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="206.85" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="240.98" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="275.11" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="309.25" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="104.45" y="70.31" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="70.31" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="104.45" y="104.45" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="104.45" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="309.25" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="343.38" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="275.11" y="206.85" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="309.25" y="206.85" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="206.85" y="240.98" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="240.98" y="240.98" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="275.11" y="240.98" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="172.71" y="309.25" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="138.58" y="343.38" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="104.45" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="138.58" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="172.71" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="206.85" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="240.98" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="275.11" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="309.25" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="343.38" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="377.51" y="479.91" width="30.04" height="30.04" rx="6.01" class="icon-shadow"/>
+                    <rect x="70.31" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="104.45" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="309.25" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="2.05" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="70.31" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="36.18" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="70.31" y="70.31" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="70.31" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="104.45" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="104.45" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="309.25" y="138.58" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="172.71" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="206.85" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="206.85" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="206.85" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="275.11" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="275.11" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="104.45" y="309.25" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="309.25" y="309.25" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="343.38" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="343.38" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="70.31" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="377.51" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="70.31" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="104.45" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="309.25" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="411.65" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="70.31" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="104.45" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="138.58" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="172.71" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="206.85" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="240.98" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="275.11" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="309.25" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                    <rect x="343.38" y="445.78" width="30.04" height="30.04" rx="6.01" class="icon-blue"/>
+                  </svg>
+                </div>
+                <div class="stat-card__content">
+                  <p class="stat-card__label">Pending</p>
+                  <p class="stat-card__value" id="stat-pending">0</p>
+                </div>
+              </div>
+            </div>
+          </div><!-- /stats-grid -->
+
+          <!-- Content: Blocks + RFFs -->
+          <div class="content-grid">
+
+            <!-- Latest Blocks -->
+            <section class="section-card">
+              <div class="section-card__header">
+                <div class="section-card__title-wrapper">
+                  <h2 class="section-card__title">Latest Blocks</h2>
+                </div>
+                <button class="section-card__action" aria-label="View all blocks">
+                  View all
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"></path>
+                  </svg>
+                </button>
+              </div>
+
+              <div id="blocks-list">
+                <div class="data-row is-new">
+                  <div class="data-row__left">
+                    <span class="data-row__block-num">#31,009</span>
+                    <span class="data-row__hash">0x05aefb…1f6aa5</span>
+                    <span class="badge-new">NEW</span>
+                  </div>
+                  <div class="data-row__meta">
+                    <span class="data-row__time">less than a minute ago</span>
+                    <span class="data-row__txs">2 txs</span>
+                  </div>
+                </div>
+
+                <div class="data-row">
+                  <div class="data-row__left">
+                    <span class="data-row__block-num">#31,008</span>
+                    <span class="data-row__hash">0x1e47a2…06f2ff</span>
+                  </div>
+                  <div class="data-row__meta">
+                    <span class="data-row__time">less than a minute ago</span>
+                    <span class="data-row__txs">2 txs</span>
+                  </div>
+                </div>
+
+                <div class="data-row">
+                  <div class="data-row__left">
+                    <span class="data-row__block-num">#31,007</span>
+                    <span class="data-row__hash">0xac8203…c070e4</span>
+                  </div>
+                  <div class="data-row__meta">
+                    <span class="data-row__time">1 minute ago</span>
+                    <span class="data-row__txs">2 txs</span>
+                  </div>
+                </div>
+
+                <div class="data-row">
+                  <div class="data-row__left">
+                    <span class="data-row__block-num">#31,006</span>
+                    <span class="data-row__hash">0x4f19e5…a2a5e4</span>
+                  </div>
+                  <div class="data-row__meta">
+                    <span class="data-row__time">2 minutes ago</span>
+                    <span class="data-row__txs">1 tx</span>
+                  </div>
+                </div>
+
+                <div class="data-row">
+                  <div class="data-row__left">
+                    <span class="data-row__block-num">#31,005</span>
+                    <span class="data-row__hash">0x2fec3d…097d65</span>
+                  </div>
+                  <div class="data-row__meta">
+                    <span class="data-row__time">3 minutes ago</span>
+                    <span class="data-row__txs">1 tx</span>
+                  </div>
+                </div>
+              </div>
+            </section><!-- /section-card (blocks) -->
+
+            <!-- Recent RFFs -->
+            <section class="section-card">
+              <div class="section-card__header">
+                <div class="section-card__title-wrapper">
+                  <h2 class="section-card__title">Recent RFFs</h2>
+                </div>
+              </div>
+
+              <!-- Empty state -->
+              <div class="empty-state" id="rffs-empty">
+                <h3 class="empty-state__title">No RFFs yet</h3>
+                <p class="empty-state__body">
+                  Rollup Finality Frauds will appear here once they are submitted to the network.
+                </p>
+              </div>
+            </section><!-- /section-card (RFFs) -->
+
+          </div><!-- /content-grid -->
+
+        </div><!-- /inner-content -->
+      </div><!-- /inner-container -->
+
+    </div><!-- /outer-container -->
+
+  </main>
+
+  <!-- ============================================================
+       Footer
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <!-- Status on left -->
+      <div class="site-footer__status">
+        <div class="hero__status">
+          <svg class="status-icon" viewBox="0 0 512 512" width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+            <rect x="451.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="451.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="387.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="451.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="323.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="387.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="259.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="323.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="259.84" y="451.84" width="56.32" height="56.32" rx="11.26" class="icon-shadow"/>
+            <rect x="67.84" y="3.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="323.84" y="3.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="3.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="67.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="131.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="259.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="323.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="387.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="3.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="67.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="131.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="195.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="259.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="323.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="387.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="3.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="67.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="131.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="195.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="259.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="323.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="387.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="67.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="131.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="195.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="259.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="323.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="131.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="195.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="259.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+            <rect x="195.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-blue"/>
+          </svg>
+          <span class="hero__status-text">Live</span>
+        </div>
+      </div>
+
+      <!-- Links on right -->
+      <div class="site-footer__links">
+        <a href="https://github.com/availproject" target="_blank" rel="noopener noreferrer">
+          <svg class="footer-icon" viewBox="0 0 512 512" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+            <rect x="131.84" y="3.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="195.84" y="3.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="259.84" y="3.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="323.84" y="3.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="67.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="131.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="195.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="259.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="323.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="387.84" y="67.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="3.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="67.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="387.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="451.84" y="131.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="3.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="67.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="387.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="451.84" y="195.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="3.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="67.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="387.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="451.84" y="259.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="3.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="67.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="387.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="451.84" y="323.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="67.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="131.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="323.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="387.84" y="387.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="131.84" y="451.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+            <rect x="323.84" y="451.84" width="56.32" height="56.32" rx="11.26" class="icon-gray"/>
+          </svg>
+          GitHub
+        </a>
+        <a href="https://docs.availproject.org" target="_blank" rel="noopener noreferrer">
+          <svg class="footer-icon" viewBox="0 0 512 512" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4.39" y="4.39" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="77.53" y="4.39" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="150.67" y="4.39" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="223.82" y="4.39" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="4.39" y="77.53" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="223.82" y="77.53" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="296.96" y="77.53" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="4.39" y="150.67" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="296.96" y="150.67" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="370.10" y="150.67" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="4.39" y="223.82" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="370.10" y="223.82" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="4.39" y="296.96" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="370.10" y="296.96" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="4.39" y="370.10" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="370.10" y="370.10" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="4.39" y="443.25" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="77.53" y="443.25" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="150.67" y="443.25" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="223.82" y="443.25" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="296.96" y="443.25" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+            <rect x="370.10" y="443.25" width="64.37" height="64.37" rx="12.87" class="icon-gray"/>
+          </svg>
+          Docs
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Avail Grid Logo (centered, below links) -->
+  <div class="site-footer__grid-logo">
+    <img src="assets/images/avail-logo-grid.webp" alt="Avail">
+  </div>
+
+  <!-- ============================================================
+        Scripts
+        ============================================================ -->
+  <script src="assets/js/halftone-background.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
