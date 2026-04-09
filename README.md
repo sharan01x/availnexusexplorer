@@ -1,9 +1,8 @@
 # Nexus Explorer — Design System Implementation
 
-**Example implementation for the Avail Nexus Explorer**, demonstrating how to apply the official Avail design system from [docs.availproject.org](https://docs.availproject.org).
+**Example implementation for the Avail Nexus Explorer**, demonstrating how to apply the official Avail design system.
 
-🔗 **Live Reference**: [nexus-v2.mainnet.avail.so](https://nexus-v2.mainnet.avail.so)
-📚 **Design System**: [docs.availproject.org](https://docs.availproject.org)
+🔗 **Live Reference**: [sharan01x.github.io/availnexusexplorer](https://sharan01x.github.io/availnexusexplorer)
 
 ---
 
